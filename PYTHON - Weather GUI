@@ -1,0 +1,56 @@
+import requests
+import json
+import tkinter as tk
+from tkinter import messagebox
+
+# Replace 'YOUR_API_KEY' with your actual OpenWeatherMap API key
+api_key = 'YOUR_API_KEY'
+
+def get_weather(city):
+    base_url = "http://api.openweathermap.org/data/2.5/weather?"
+    complete_url = f"{base_url}q={city}&appid={api_key}&units=metric"
+
+    response = requests.get(complete_url)
+
+    if response.status_code == 200:
+        data = response.json()
+        main_data = data['main']
+        weather_data = data['weather'][0]
+
+        temperature = main_data['temp']
+        humidity = main_data['humidity']
+        description = weather_data['description']
+
+        weather_info = f"Weather in {city}:\n"
+        weather_info += f"Temperature: {temperature}°C\n"
+        weather_info += f"Humidity: {humidity}%\n"
+        weather_info += f"Description: {description.capitalize()}"
+
+        return weather_info
+    else:
+        return "City not found or error in fetching data. Please check the city name or try again later."
+
+def show_weather_popup():
+    city = city_entry.get()
+    weather_info = get_weather(city)
+
+    messagebox.showinfo("Weather Information", weather_info)
+
+# Create the main application window
+app = tk.Tk()
+app.title("Weather App")
+
+# Create and configure widgets
+label = tk.Label(app, text="Enter city name:")
+city_entry = tk.Entry(app)
+get_weather_button = tk.Button(app, text="Get Weather", command=show_weather_popup)
+
+# Place widgets in the window
+label.pack()
+city_entry.pack()
+get_weather_button.pack()
+
+# Start the Tkinter main loop
+app.mainloop()
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
